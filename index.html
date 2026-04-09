@@ -1,0 +1,1461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="OET Nursing preparation app — Writing, Speaking, Vocabulary and Listening Log. Mobile-friendly, no login required.">
+<meta name="theme-color" content="#c4673a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="OET Prep">
+<link rel="manifest" href="manifest.json">
+<title>OET Nursing Prep · Study Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:        #f5f0eb;
+    --surface:   #fdfaf7;
+    --border:    #e2d9d0;
+    --text:      #2c2018;
+    --muted:     #7a6858;
+    --accent:    #c4673a;
+    --accent2:   #4a7c6f;
+    --accent3:   #7a5c8a;
+    --accent4:   #3a6b9a;
+    --warn:      #b85a2a;
+    --green:     #3b7a57;
+    --tag-bg:    #ede5dc;
+    --card:      #ffffff;
+    --shadow:    0 2px 12px rgba(44,32,24,0.07);
+    --radius:    14px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 18px 20px 14px;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.35rem;
+    color: var(--accent);
+    letter-spacing: -0.3px;
+  }
+  header p {
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  /* ── NAV TABS ── */
+  nav {
+    display: flex;
+    background: var(--surface);
+    border-bottom: 2px solid var(--border);
+    overflow-x: auto;
+    scrollbar-width: none;
+    gap: 0;
+    position: sticky;
+    top: 70px;
+    z-index: 99;
+  }
+  nav::-webkit-scrollbar { display: none; }
+  .tab {
+    flex: 1;
+    min-width: 80px;
+    padding: 11px 8px 9px;
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .tab .tab-icon { display: block; font-size: 1.2rem; margin-bottom: 2px; }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .tab:hover:not(.active) { color: var(--text); background: var(--tag-bg); }
+
+  /* ── SECTIONS ── */
+  .section { display: none; padding: 20px 16px 80px; max-width: 720px; margin: 0 auto; }
+  .section.active { display: block; }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+  .card-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.05rem;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+  .card-subtitle {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+
+  /* ── BUTTONS ── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 18px;
+    border-radius: 8px;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: var(--warn); transform: translateY(-1px); }
+  .btn-secondary { background: var(--tag-bg); color: var(--text); border: 1px solid var(--border); }
+  .btn-secondary:hover { background: var(--border); }
+  .btn-green { background: var(--accent2); color: #fff; }
+  .btn-green:hover { filter: brightness(1.1); }
+  .btn-small { padding: 6px 12px; font-size: 0.78rem; }
+  .btn-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+
+  /* ── SCENARIO SELECTOR ── */
+  .scenario-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--tag-bg);
+    border-radius: 10px;
+    padding: 8px 12px;
+    margin-bottom: 14px;
+  }
+  .scenario-nav span { font-size: 0.82rem; color: var(--muted); font-weight: 500; }
+  .scenario-nav .nav-btns { display: flex; gap: 6px; }
+
+  /* ── BADGE ── */
+  .badge {
+    display: inline-block;
+    padding: 3px 9px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+  .badge-nicu { background: #dbeafe; color: #1e40af; }
+  .badge-emerg { background: #fee2e2; color: #991b1b; }
+  .badge-paeds { background: #dcfce7; color: #166534; }
+  .badge-obs { background: #fef9c3; color: #854d0e; }
+  .badge-discharge { background: #f3e8ff; color: #6b21a8; }
+
+  /* ── WRITING SECTION ── */
+  .scenario-box {
+    background: #fff8f3;
+    border: 1px solid #f0dfd0;
+    border-left: 4px solid var(--accent);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 14px;
+  }
+  .scenario-box .label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--accent);
+    letter-spacing: 0.8px;
+    margin-bottom: 6px;
+  }
+  .scenario-box p { font-size: 0.9rem; line-height: 1.55; }
+
+  textarea.letter-area {
+    width: 100%;
+    min-height: 260px;
+    padding: 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.82rem;
+    line-height: 1.65;
+    color: var(--text);
+    background: var(--surface);
+    resize: vertical;
+    transition: border-color 0.2s;
+  }
+  textarea.letter-area:focus { outline: none; border-color: var(--accent); }
+
+  .model-answer {
+    display: none;
+    background: #f0f7f4;
+    border: 1px solid #c4dfd8;
+    border-radius: 10px;
+    padding: 16px;
+    margin-top: 12px;
+  }
+  .model-answer .ma-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--accent2);
+    letter-spacing: 0.8px;
+    margin-bottom: 8px;
+  }
+  .model-answer pre {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    white-space: pre-wrap;
+    line-height: 1.7;
+    color: #1a3a30;
+  }
+
+  .checklist { margin-top: 14px; }
+  .checklist-title {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+  }
+  .check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    margin-bottom: 4px;
+    cursor: pointer;
+    transition: background 0.15s;
+    border: 1px solid transparent;
+  }
+  .check-item:hover { background: var(--tag-bg); }
+  .check-item input[type="checkbox"] {
+    margin-top: 2px;
+    width: 16px;
+    height: 16px;
+    accent-color: var(--accent2);
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .check-item label { font-size: 0.85rem; cursor: pointer; }
+  .check-item.checked { background: #edfaf5; border-color: #b2ddd0; }
+  .check-progress {
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin-top: 6px;
+    text-align: right;
+  }
+
+  /* ── SPEAKING SECTION ── */
+  .role-card {
+    background: #fffaf5;
+    border: 1px solid #f0dfd0;
+    border-radius: var(--radius);
+    padding: 18px;
+    margin-bottom: 14px;
+  }
+  .role-card .rcard-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    gap: 10px;
+  }
+  .role-card h3 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1rem;
+    flex: 1;
+  }
+  .patient-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .info-pill {
+    background: var(--tag-bg);
+    border-radius: 8px;
+    padding: 7px 10px;
+    font-size: 0.8rem;
+  }
+  .info-pill strong { display: block; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.4px; color: var(--muted); margin-bottom: 2px; }
+  .task-box {
+    background: #fff3e8;
+    border: 1px solid #f5d5b0;
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 12px;
+  }
+  .task-box .tbox-label { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; color: var(--accent); letter-spacing: 0.6px; margin-bottom: 4px; }
+  .task-box p { font-size: 0.85rem; }
+
+  /* ── TIMER ── */
+  .timer-wrapper {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 14px;
+    text-align: center;
+  }
+  .timer-phases { display: flex; gap: 8px; justify-content: center; margin-bottom: 12px; flex-wrap: wrap; }
+  .phase-btn {
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1.5px solid var(--border);
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    background: var(--tag-bg);
+    color: var(--muted);
+    transition: all 0.2s;
+  }
+  .phase-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .timer-display {
+    font-family: 'DM Mono', monospace;
+    font-size: 3rem;
+    font-weight: 500;
+    color: var(--text);
+    letter-spacing: 3px;
+    line-height: 1;
+    margin: 8px 0;
+  }
+  .timer-display.warn { color: var(--warn); }
+  .timer-label { font-size: 0.78rem; color: var(--muted); margin-bottom: 12px; }
+  .timer-controls { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+
+  .tips-box {
+    background: #f0f4ff;
+    border: 1px solid #c8d8f5;
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-top: 10px;
+  }
+  .tips-box .tips-label { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; color: var(--accent4); letter-spacing: 0.6px; margin-bottom: 6px; }
+  .tips-box ul { padding-left: 16px; }
+  .tips-box li { font-size: 0.82rem; margin-bottom: 4px; color: #1a2a4a; }
+
+  /* ── VOCAB SECTION ── */
+  .vocab-cats { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+  .vcat-btn {
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1.5px solid var(--border);
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    background: var(--tag-bg);
+    color: var(--muted);
+    transition: all 0.18s;
+  }
+  .vcat-btn.active { background: var(--accent3); color: #fff; border-color: var(--accent3); }
+
+  .vocab-list { display: flex; flex-direction: column; gap: 8px; }
+  .vocab-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+  .vocab-item:hover { border-color: var(--accent3); }
+  .vocab-term { font-weight: 600; font-size: 0.92rem; color: var(--text); }
+  .vocab-def { font-size: 0.82rem; color: var(--muted); margin-top: 4px; display: none; }
+  .vocab-example { font-size: 0.78rem; font-style: italic; color: var(--accent4); margin-top: 4px; display: none; border-left: 2px solid var(--accent4); padding-left: 8px; }
+  .vocab-item.open .vocab-def, .vocab-item.open .vocab-example { display: block; }
+  .vocab-item.open { border-color: var(--accent3); background: #faf8ff; }
+
+  /* SELF TEST */
+  .test-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px;
+    margin-top: 16px;
+  }
+  .test-box h3 { font-family: 'DM Serif Display', serif; font-size: 1rem; margin-bottom: 12px; }
+  .test-term {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--accent3);
+    background: #f5f0ff;
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-bottom: 12px;
+    text-align: center;
+  }
+  .test-input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    background: var(--surface);
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+  .test-input:focus { outline: none; border-color: var(--accent3); }
+  .test-reveal { display: none; padding: 10px 12px; background: #edfaf5; border-radius: 8px; border: 1px solid #b2ddd0; font-size: 0.85rem; margin-bottom: 10px; }
+  .test-score { font-size: 0.82rem; color: var(--muted); text-align: center; margin-top: 8px; }
+
+  /* ── LISTENING LOG ── */
+  .log-form { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; margin-bottom: 16px; }
+  .form-row { margin-bottom: 12px; }
+  .form-row label { display: block; font-size: 0.78rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 5px; }
+  .form-input, .form-select, .form-textarea {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    background: var(--surface);
+    color: var(--text);
+  }
+  .form-input:focus, .form-select:focus, .form-textarea:focus { outline: none; border-color: var(--accent4); }
+  .form-textarea { min-height: 80px; resize: vertical; }
+  .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  .log-entries { display: flex; flex-direction: column; gap: 8px; }
+  .log-entry {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .log-date {
+    background: var(--tag-bg);
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--muted);
+    white-space: nowrap;
+    text-align: center;
+  }
+  .log-body { flex: 1; }
+  .log-resource { font-weight: 600; font-size: 0.88rem; }
+  .log-score { font-size: 0.75rem; color: var(--accent4); margin-top: 2px; }
+  .log-notes { font-size: 0.8rem; color: var(--muted); margin-top: 3px; }
+  .log-delete { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 1rem; padding: 2px; transition: color 0.15s; }
+  .log-delete:hover { color: var(--warn); }
+
+  .empty-state { text-align: center; padding: 30px 16px; color: var(--muted); font-size: 0.88rem; }
+  .empty-state .empty-icon { font-size: 2.5rem; margin-bottom: 8px; }
+
+  /* ── STATS STRIP ── */
+  .stats-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px; }
+  .stat-box { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 12px; text-align: center; }
+  .stat-num { font-family: 'DM Serif Display', serif; font-size: 1.6rem; color: var(--accent4); line-height: 1; }
+  .stat-label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); margin-top: 2px; }
+
+  /* ── MISC ── */
+  .section-header { margin-bottom: 16px; }
+  .section-header h2 { font-family: 'DM Serif Display', serif; font-size: 1.3rem; }
+  .section-header p { font-size: 0.82rem; color: var(--muted); margin-top: 4px; }
+  hr.divider { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 600; background: var(--tag-bg); color: var(--muted); margin-right: 4px; }
+
+  @media(max-width: 420px) {
+    .patient-info { grid-template-columns: 1fr; }
+    .timer-display { font-size: 2.4rem; }
+    .form-row-2 { grid-template-columns: 1fr; }
+    .stats-strip { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>OET Nursing Prep</h1>
+  <p>Writing · Speaking · Vocabulary · Listening &nbsp;·&nbsp; July 2026</p>
+</header>
+
+
+<div id="installBanner" style="display:none;background:#fff8f0;border-bottom:1px solid #f0dfd0;padding:8px 16px;text-align:center;font-size:0.78rem;color:#7a6858;">
+  📱 <strong>Add to Home Screen</strong> for offline use &nbsp;
+  <button onclick="installApp()" style="background:var(--accent);color:#fff;border:none;border-radius:6px;padding:4px 12px;font-size:0.75rem;font-weight:600;cursor:pointer;">Install</button>
+  <button onclick="document.getElementById('installBanner').style.display='none'" style="background:none;border:none;color:var(--muted);cursor:pointer;margin-left:6px;">✕</button>
+</div>
+<nav id="mainNav">
+  <button class="tab active" onclick="showSection('writing',this)">
+    <span class="tab-icon">✍️</span>Writing
+  </button>
+  <button class="tab" onclick="showSection('speaking',this)">
+    <span class="tab-icon">🎙️</span>Speaking
+  </button>
+  <button class="tab" onclick="showSection('vocab',this)">
+    <span class="tab-icon">📖</span>Vocab
+  </button>
+  <button class="tab" onclick="showSection('log',this)">
+    <span class="tab-icon">📋</span>Log
+  </button>
+</nav>
+
+<!-- ════════════════════════════════════════
+     WRITING
+════════════════════════════════════════ -->
+<section id="writing" class="section active">
+  <div class="section-header">
+    <h2>Writing Practice</h2>
+    <p>OET Nursing Sub-test B — referral, transfer and discharge letters</p>
+  </div>
+
+  <div class="scenario-nav">
+    <button class="btn btn-secondary btn-small" onclick="prevScenario()">← Prev</button>
+    <span id="wScenarioLabel">Scenario 1 / 8</span>
+    <button class="btn btn-secondary btn-small" onclick="nextScenario()">Next →</button>
+  </div>
+
+  <div class="card">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+      <span id="wBadge" class="badge badge-nicu">NICU</span>
+      <span id="wScenarioTitle" class="card-title" style="margin:0">Neonatal Respiratory Distress</span>
+    </div>
+    <div class="scenario-box">
+      <div class="label">📋 Your Task</div>
+      <p id="wScenarioText"></p>
+    </div>
+    <div style="font-size:0.78rem;color:var(--muted);margin-bottom:10px;">
+      <strong>Notes:</strong> <span id="wScenarioNotes"></span>
+    </div>
+    <textarea class="letter-area" id="letterArea" placeholder="Begin your letter here…&#10;&#10;[Hospital Name]&#10;[Date]&#10;&#10;Dear [Title + Surname],&#10;&#10;Re: [Patient name], DOB [date]&#10;&#10;I am writing to refer…"></textarea>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="toggleModel()">👁 Show model answer</button>
+      <button class="btn btn-secondary" onclick="clearLetter()">🗑 Clear</button>
+      <button class="btn btn-secondary btn-small" onclick="copyLetter()">📋 Copy</button>
+    </div>
+
+    <div class="model-answer" id="modelAnswer">
+      <div class="ma-label">✅ Model Answer (OET Grade B standard)</div>
+      <pre id="modelText"></pre>
+    </div>
+
+    <hr class="divider">
+    <div class="checklist">
+      <div class="checklist-title">Self-marking checklist</div>
+      <div id="checklistItems"></div>
+      <div class="check-progress" id="checkProgress">0 / 5 criteria ticked</div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════
+     SPEAKING
+════════════════════════════════════════ -->
+<section id="speaking" class="section">
+  <div class="section-header">
+    <h2>Speaking Practice</h2>
+    <p>OET Nursing Sub-test C — role plays with patient/carer</p>
+  </div>
+
+  <div class="scenario-nav">
+    <button class="btn btn-secondary btn-small" onclick="prevSpeaking()">← Prev</button>
+    <span id="sScenarioLabel">Scenario 1 / 6</span>
+    <button class="btn btn-secondary btn-small" onclick="nextSpeaking()">Next →</button>
+  </div>
+
+  <div class="role-card" id="roleCard">
+    <div class="rcard-header">
+      <h3 id="sTitle"></h3>
+      <span id="sBadge" class="badge badge-emerg">Emergency</span>
+    </div>
+    <div class="patient-info" id="patientInfo"></div>
+    <div class="task-box">
+      <div class="tbox-label">🎯 Your Task (Nurse's Card)</div>
+      <p id="sTask"></p>
+    </div>
+    <div class="tips-box" id="sTips">
+      <div class="tips-label">📌 OET Examiner Tips</div>
+      <ul id="sTipsList"></ul>
+    </div>
+  </div>
+
+  <!-- Timer -->
+  <div class="timer-wrapper">
+    <div class="timer-phases">
+      <button class="phase-btn active" id="prepBtn" onclick="setPhase('prep')">⏱ Prep (3 min)</button>
+      <button class="phase-btn" id="roleBtn" onclick="setPhase('role')">🎙 Role play (5 min)</button>
+    </div>
+    <div class="timer-display" id="timerDisplay">3:00</div>
+    <div class="timer-label" id="timerLabel">Preparation time — read and plan your response</div>
+    <div class="timer-controls">
+      <button class="btn btn-primary" onclick="startTimer()">▶ Start</button>
+      <button class="btn btn-secondary" onclick="pauseTimer()">⏸ Pause</button>
+      <button class="btn btn-secondary" onclick="resetTimer()">↺ Reset</button>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════
+     VOCABULARY
+════════════════════════════════════════ -->
+<section id="vocab" class="section">
+  <div class="section-header">
+    <h2>Clinical Vocabulary Bank</h2>
+    <p>Tap a term to see definition and example sentence</p>
+  </div>
+
+  <div class="vocab-cats" id="vocabCats"></div>
+  <div class="vocab-list" id="vocabList"></div>
+
+  <hr class="divider">
+  <!-- Self-test -->
+  <div class="test-box">
+    <h3>🧪 Quick Self-Test</h3>
+    <div class="test-term" id="testTerm">—</div>
+    <input class="test-input" id="testInput" placeholder="Type the definition from memory…" />
+    <div class="test-reveal" id="testReveal"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary btn-small" onclick="revealTest()">Reveal definition</button>
+      <button class="btn btn-secondary btn-small" onclick="nextTest()">Next term ›</button>
+    </div>
+    <div class="test-score" id="testScore"></div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════
+     LOG
+════════════════════════════════════════ -->
+<section id="log" class="section">
+  <div class="section-header">
+    <h2>Listening Practice Log</h2>
+    <p>Track every session — saved in your browser</p>
+  </div>
+
+  <div class="stats-strip" id="statsStrip">
+    <div class="stat-box"><div class="stat-num" id="statTotal">0</div><div class="stat-label">Sessions</div></div>
+    <div class="stat-box"><div class="stat-num" id="statAvg">—</div><div class="stat-label">Avg score</div></div>
+    <div class="stat-box"><div class="stat-num" id="statStreak">0</div><div class="stat-label">Day streak</div></div>
+  </div>
+
+  <div class="log-form">
+    <div class="form-row-2">
+      <div class="form-row">
+        <label>Date</label>
+        <input type="date" class="form-input" id="logDate">
+      </div>
+      <div class="form-row">
+        <label>Score / Band</label>
+        <input type="text" class="form-input" id="logScore" placeholder="e.g. B, 340, 85%">
+      </div>
+    </div>
+    <div class="form-row">
+      <label>Resource used</label>
+      <select class="form-select" id="logResource">
+        <option value="">— Select —</option>
+        <option>OET Official Practice Test</option>
+        <option>Macmillan OET Nursing</option>
+        <option>E2 Language OET Listening</option>
+        <option>OET Cambridge Official Guide</option>
+        <option>IELTS Listening (extra practice)</option>
+        <option>YouTube OET Listening</option>
+        <option>Custom / Other</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label>Notes</label>
+      <textarea class="form-textarea" id="logNotes" placeholder="What went well? What was difficult? Key vocabulary…"></textarea>
+    </div>
+    <button class="btn btn-green" onclick="saveLog()">💾 Save session</button>
+  </div>
+
+  <div id="logEntries"></div>
+</section>
+
+<script>
+// ══════════════════════════════════════
+// DATA
+// ══════════════════════════════════════
+
+const writingScenarios = [
+  {
+    title: "Neonatal Respiratory Distress",
+    badge: "badge-nicu", badgeText: "NICU",
+    text: "You are a neonatal nurse at General Hospital. Baby Garcia, a 3-day-old male neonate (2,850 g, born at 38 weeks), has been in NICU for 48 hours with respiratory distress syndrome (RDS). His condition has stabilised on CPAP at FiO₂ 0.35. He needs transfer to Regional Neonatal Centre for ongoing respiratory support and parental counselling. Write a transfer letter to the receiving consultant neonatologist.",
+    notes: "DOB: 15 April 2026. Mother: Ana Garcia, 28 y/o. APGAR 5 (1 min) / 8 (5 min). Currently on CPAP, IV fluids, caffeine citrate.",
+    model: `General Hospital Neonatal Unit
+16 April 2026
+
+Dr Sarah Mitchell
+Consultant Neonatologist
+Regional Neonatal Centre
+Northside General Hospital
+
+Dear Dr Mitchell,
+
+Re: Baby Garcia (male), DOB: 15 April 2026, DOL 1 (48 hours)
+Mother: Ana Garcia, DOB: 12 March 1998
+
+I am writing to refer the above neonate for ongoing specialist respiratory management and parental support following initial stabilisation at our unit.
+
+Baby Garcia was born at 38+0 weeks gestation via emergency lower segment caesarean section following non-reassuring cardiotocography. Birth weight was 2,850 g. APGAR scores were 5 at one minute and 8 at five minutes, with initial resuscitation required.
+
+He was admitted to our NICU at two hours of life with increasing respiratory distress (grunting, subcostal recession, tachypnoea 72 breaths/min) and was commenced on CPAP. A chest radiograph confirmed bilateral ground-glass opacification consistent with respiratory distress syndrome. He has not required surfactant administration to date.
+
+Currently, Baby Garcia is haemodynamically stable on CPAP (PEEP 6 cmH₂O, FiO₂ 0.35), total parenteral nutrition, and caffeine citrate 20 mg/kg/day for apnoea prophylaxis. Blood cultures taken on admission remain negative at 48 hours; empirical antibiotics have been discontinued.
+
+The family require considerable psychosocial support. This is Mrs Garcia's first child and she is experiencing significant anxiety regarding the prognosis. Parental bonding has been limited due to the level of respiratory support required.
+
+I would be grateful if you could accept Baby Garcia for transfer and continue his respiratory management with a view to weaning CPAP support. Please do not hesitate to contact me should you require any further information.
+
+Yours sincerely,
+
+Staff Nurse Sheila Ahmed
+Neonatal Intensive Care Unit
+General Hospital`
+  },
+  {
+    title: "Febrile Neutropenia — Oncology Transfer",
+    badge: "badge-emerg", badgeText: "Emergency",
+    text: "You are an emergency nurse. Mr David Park, 52 y/o, presents with fever 39.2°C, rigors, and generalised malaise. He is a known patient receiving third cycle of chemotherapy (CHOP regime) for diffuse large B-cell lymphoma. His neutrophil count is 0.2 × 10⁹/L. He needs urgent admission to the oncology ward. Write a referral letter to the oncology registrar.",
+    notes: "Presented 02:30. BP 95/60, HR 118, SpO₂ 96% on room air. Peripheral blood cultures ×2 taken. IV access established. Piperacillin-tazobactam commenced.",
+    model: `Emergency Department
+St Mary's General Hospital
+16 April 2026
+
+Dr James Nguyen
+Oncology Registrar
+Haematology/Oncology Ward, Level 3
+
+Dear Dr Nguyen,
+
+Re: David Park, DOB: 03 September 1973
+Hospital Number: SP-447821
+
+I am writing to refer Mr Park for urgent inpatient admission under your team, regarding an episode of febrile neutropenia requiring immediate oncological management.
+
+Mr Park is a known patient of Dr Williams with diffuse large B-cell lymphoma who presented to the Emergency Department at 02:30 today. He reported a 24-hour history of fever, rigors, and progressive malaise following his third cycle of CHOP chemotherapy, administered 12 days ago.
+
+On assessment, he was pyrexial at 39.2°C, tachycardic (HR 118 bpm) and hypotensive (BP 95/60 mmHg), with oxygen saturations of 96% on room air. His neutrophil count was critically low at 0.2 × 10⁹/L, confirming febrile neutropenia. Two sets of peripheral blood cultures have been obtained and empirical broad-spectrum antibiotic therapy with intravenous piperacillin-tazobactam has been commenced in accordance with local sepsis protocol.
+
+He appears clinically stable following fluid resuscitation (500 mL crystalloid bolus), with BP improving to 108/70 mmHg. He remains anxious and has requested clarification regarding his prognosis; I have reassured him that his concerns will be discussed with the oncology team.
+
+I would be grateful if you could review Mr Park urgently and arrange inpatient admission for ongoing sepsis management, consideration of G-CSF, and haematological review.
+
+Yours sincerely,
+
+Staff Nurse Sheila Ahmed
+Emergency Department, Bay 4`
+  },
+  {
+    title: "Paediatric Asthma — Discharge Letter",
+    badge: "badge-paeds", badgeText: "Paediatrics",
+    text: "You are a paediatric ward nurse. Lily Chen, 7 y/o, was admitted 3 days ago with a severe acute asthma exacerbation requiring IV salbutamol and magnesium sulphate. She is now stable on step-down therapy and ready for discharge. Write a discharge letter to her GP summarising admission and outlining the ongoing management plan.",
+    notes: "Discharged on: salbutamol inhaler 2-4 puffs PRN, fluticasone 100 mcg BD via spacer, prednisolone 20 mg OD for 3 more days. Follow-up: paediatric respiratory clinic in 4 weeks. Mother is Ms Chen.",
+    model: `Paediatric Ward
+City Children's Hospital
+16 April 2026
+
+Dr Margaret Sullivan
+The Family Practice
+14 Green Lane, Northtown
+
+Dear Dr Sullivan,
+
+Re: Lily Chen, DOB: 20 August 2018 (age 7)
+Mother: Ms Angela Chen
+
+I am writing to inform you of Lily's recent admission to our paediatric ward and to provide a summary of her treatment and ongoing management plan following discharge today.
+
+Lily was admitted on 13 April 2026 with a severe acute asthma exacerbation precipitated by a viral upper respiratory tract infection. On arrival, she was in significant respiratory distress with a respiratory rate of 40 breaths per minute, accessory muscle use, and a wheeze audible without auscultation. Her oxygen saturations were 88% on room air, improving to 96% on 6 L/min of supplemental oxygen.
+
+She required two doses of intravenous magnesium sulphate and a continuous infusion of intravenous salbutamol over the first 12 hours. She was also commenced on intravenous hydrocortisone and regular nebulised ipratropium. She responded well to treatment and was successfully stepped down to inhaled therapy by day two.
+
+Lily is discharged today in a stable condition on the following regimen: salbutamol 2–4 puffs via spacer as required, fluticasone propionate 100 mcg twice daily via spacer, and a reducing course of oral prednisolone 20 mg once daily for a further three days.
+
+I would be grateful if you could review her asthma action plan at her next appointment. Ms Chen has been counselled regarding inhaler technique, trigger avoidance, and the importance of seeking urgent medical review if symptoms deteriorate. A follow-up appointment has been made at our paediatric respiratory outpatient clinic in four weeks.
+
+Please do not hesitate to contact the ward if you have any concerns.
+
+Yours sincerely,
+
+Staff Nurse Sheila Ahmed
+Paediatric Ward, Bay B`
+  },
+  {
+    title: "Postpartum Haemorrhage — Obstetrics Referral",
+    badge: "badge-obs", badgeText: "Obstetrics",
+    text: "You are a midwifery nurse. Mrs Sara Okafor, 34 y/o, G3P3, delivered 6 hours ago at 39+4 weeks via normal vaginal delivery. She has now developed primary PPH with estimated blood loss 1,200 mL. She has been stabilised with IV oxytocin and a Bakri balloon. Write a referral letter to the on-call obstetrician for urgent specialist review.",
+    notes: "BP on arrival: 88/55. Now 102/68 after 1.5 L crystalloid. Hb pre-delivery 110 g/L. FBC and crossmatch sent. HR 104. Baby delivered in good condition.",
+    model: `Delivery Suite
+North General Maternity Unit
+16 April 2026 — 09:45
+
+Dr Amelia Ross
+Consultant Obstetrician On-Call
+North General Hospital
+
+Dear Dr Ross,
+
+Re: Sara Okafor, DOB: 02 February 1992
+Hospital Number: MU-992341
+
+I am writing to refer Mrs Okafor urgently for specialist obstetric review following a primary postpartum haemorrhage with an estimated blood loss of 1,200 mL.
+
+Mrs Okafor is a G3P3 who delivered at 39+4 weeks via normal vaginal delivery at 03:30 today. The third stage was managed actively with intramuscular syntometrine. The placenta was delivered intact with no retained products noted on clinical examination.
+
+At approximately 09:15, Mrs Okafor was found to have continued uterine bleeding with an estimated cumulative blood loss of 1,200 mL. She was initially hypotensive (BP 88/55 mmHg, HR 104 bpm) with pallor. She received a slow intravenous bolus of 10 units of oxytocin followed by a 40-unit infusion in 500 mL normal saline. Due to ongoing haemorrhage, a Bakri balloon tamponade was inserted and inflated to 300 mL with resolution of active bleeding.
+
+Following 1.5 litres of intravenous crystalloid resuscitation, her blood pressure has improved to 102/68 mmHg, though she remains tachycardic at 98 bpm. An urgent full blood count, coagulation screen, and group and save have been dispatched. Her pre-delivery haemoglobin was 110 g/L.
+
+I would be grateful if you could review Mrs Okafor urgently to guide further haemostatic management, including the need for blood transfusion or surgical intervention. She is currently stable but requires close monitoring.
+
+Yours sincerely,
+
+Staff Nurse Sheila Ahmed
+Delivery Suite, Room 4`
+  },
+  {
+    title: "Neonatal Jaundice — Discharge Planning",
+    badge: "badge-nicu", badgeText: "NICU",
+    text: "Baby Thomas, a 5-day-old male, is ready for discharge from NICU after treatment for neonatal jaundice (peak bilirubin 285 μmol/L on day 3) with double phototherapy for 36 hours. His bilirubin is now 145 μmol/L and falling. Write a discharge letter to the community midwife and GP outlining the treatment received and monitoring needed at home.",
+    notes: "Mother: Kate Thomas, 31 y/o. Blood group O+, baby A+. DAT negative. Exclusively breastfed. Bilirubin at discharge: 145 μmol/L. Next bilirubin check recommended in 48 hours.",
+    model: `Neonatal Unit
+Royal Infirmary Hospital
+16 April 2026
+
+Ms Rachel Price, Community Midwife
+Dr Andrew Bell, GP
+Westfield Health Centre
+
+Dear Ms Price and Dr Bell,
+
+Re: Baby Thomas (male), DOB: 11 April 2026 (Day of Life 5)
+Mother: Kate Thomas, DOB: 14 November 1994
+
+I am writing to inform you of Baby Thomas's discharge from our neonatal unit today and to outline the monitoring required in the community.
+
+Baby Thomas was admitted on day three of life with clinically significant jaundice. His transcutaneous bilirubin was 285 μmol/L, confirmed on serum sampling, which exceeded the treatment threshold on the NICE phototherapy chart for a term infant. He was commenced on double phototherapy and received 36 hours of treatment. A direct antiglobulin test (DAT) was negative. His mother is blood group O+ and Baby Thomas is blood group A+, making ABO incompatibility a possible contributory factor.
+
+Baby Thomas responded well to phototherapy. His bilirubin level has fallen to 145 μmol/L at the time of discharge, which is below the threshold for continuing phototherapy. He is clinically well, feeding effectively at the breast every 2–3 hours, with adequate wet and dirty nappies.
+
+We would recommend a repeat serum bilirubin in 48 hours (18 April 2026) via your community phlebotomy service. If the level rises above 200 μmol/L or if his parents report increasing jaundice, poor feeding, or lethargy, he should be re-referred to the neonatal unit for review.
+
+Mrs Thomas has been reassured and provided with written information regarding neonatal jaundice and breastfeeding support.
+
+Please do not hesitate to contact the neonatal unit if you have any concerns.
+
+Yours sincerely,
+
+Staff Nurse Sheila Ahmed
+Neonatal Intensive Care Unit`
+  },
+  {
+    title: "Head Injury — Emergency Referral to Neurosurgery",
+    badge: "badge-emerg", badgeText: "Emergency",
+    text: "You are an emergency nurse. Mr Hassan Ali, 45 y/o, was brought in by ambulance following a road traffic accident. He has a GCS of 13/15 (E3V4M6), confusion, and vomiting × 2. CT head has shown a 4 mm acute subdural haematoma with no midline shift. Write a referral letter to the on-call neurosurgical registrar.",
+    notes: "Mechanism: unrestrained passenger, 60 km/h impact. No anticoagulants. Pupils: equal and reactive 3 mm. HR 78, BP 148/88, SpO₂ 98%. CT reported by radiologist.",
+    model: `Emergency Department
+Central General Hospital
+16 April 2026 — 14:20
+
+Dr Connor Walsh
+Neurosurgical Registrar On-Call
+Regional Neurosurgical Unit
+
+Dear Dr Walsh,
+
+Re: Hassan Ali, DOB: 19 July 1980
+Hospital Number: ED-228843
+
+I am writing to refer Mr Ali urgently for neurosurgical assessment following a traumatic head injury with confirmed intracranial pathology on CT imaging.
+
+Mr Ali is a 45-year-old male who presented at 13:05 today via ambulance following a road traffic collision. He was an unrestrained passenger in a vehicle involved in a frontal impact at an estimated speed of 60 km/h. He reports a brief loss of consciousness at the scene and has subsequently had two episodes of vomiting and progressive confusion.
+
+On arrival, his Glasgow Coma Scale score was 13/15 (E3V4M6). He was haemodynamically stable (BP 148/88 mmHg, HR 78 bpm, SpO₂ 98% on room air). Pupils were equal and reactive bilaterally at 3 mm. He is not currently prescribed anticoagulants or antiplatelet agents.
+
+A CT scan of the head was performed and reported by the on-call radiologist as demonstrating an acute subdural haematoma measuring 4 mm in maximum thickness over the right frontoparietal convexity, with no midline shift and no evidence of herniation at this time.
+
+He remains alert but confused and anxious. His GCS has been stable during the past 45 minutes of observation.
+
+I would be grateful if you could review Mr Ali urgently to advise on ongoing management, frequency of neurological observations, and the need for repeat CT imaging or transfer to your unit.
+
+Yours sincerely,
+
+Staff Nurse Sheila Ahmed
+Resuscitation Bay, Emergency Department`
+  },
+  {
+    title: "Preterm Birth — Postnatal Transfer Letter",
+    badge: "badge-obs", badgeText: "Obstetrics",
+    text: "You are a neonatal nurse. Baby Rossi, a female neonate born at 28+3 weeks gestation (birth weight 950 g), requires transfer from your level 2 unit to a level 3 NICU for ongoing management of extreme prematurity, including respiratory support and TPN. Write a transfer letter to the receiving neonatologist.",
+    notes: "Born 14 April 2026. Currently intubated on SIMV. UAC and UVC in situ. TPN running. Surfactant given ×2. Caffeine commenced. Mother: Lucia Rossi, 26 y/o, post-LSCS.",
+    model: `Neonatal Unit (Level 2)
+St Joseph's Hospital
+16 April 2026
+
+Dr Priya Sharma
+Consultant Neonatologist
+University Children's Hospital — Level 3 NICU
+
+Dear Dr Sharma,
+
+Re: Baby Rossi (female), DOB: 14 April 2026
+Gestational age at birth: 28+3 weeks · Birth weight: 950 g
+Mother: Lucia Rossi, DOB: 03 February 2000
+
+I am writing to refer Baby Rossi for transfer to your Level 3 NICU for ongoing specialist management of extreme prematurity.
+
+Baby Rossi was born on 14 April 2026 at 28+3 weeks gestation by emergency lower segment caesarean section secondary to preterm premature rupture of membranes (PPROM) at 27+5 weeks with clinical chorioamnionitis. Birth weight was 950 g. She required immediate intubation and surfactant administration in the delivery room; a second dose of surfactant was given at six hours of life.
+
+She remains ventilated on synchronised intermittent mandatory ventilation (SIMV) with peak inspiratory pressure 20 cmH₂O, PEEP 5 cmH₂O, rate 40 breaths per minute, and FiO₂ 0.45. Umbilical arterial and venous catheters are in situ and functioning. She is receiving total parenteral nutrition and commencing minimal enteral feeds of expressed breast milk at 1 mL every 6 hours.
+
+Blood cultures obtained at birth remain negative at 48 hours. Ampicillin and gentamicin have been discontinued. Caffeine citrate has been commenced for apnoea of prematurity. An echocardiogram performed yesterday demonstrated a small patent ductus arteriosus (PDA) with left-to-right shunting; cardiology input is recommended.
+
+Mrs Rossi is recovering well from her caesarean section and is expressing breast milk. She is aware of her daughter's condition and prognosis and has consented to transfer. She will require ongoing psychological support.
+
+Please do not hesitate to contact our unit if you require any additional information prior to transfer.
+
+Yours sincerely,
+
+Staff Nurse Sheila Ahmed
+Neonatal Unit, St Joseph's Hospital`
+  },
+  {
+    title: "Elderly Fall with Hip Fracture — Discharge to Rehab",
+    badge: "badge-discharge", badgeText: "Discharge",
+    text: "You are an orthopaedic ward nurse. Mrs Edith Walsh, 82 y/o, is being discharged to a rehabilitation facility following a right neck-of-femur fracture and hemiarthroplasty 8 days ago. She has Type 2 diabetes and mild dementia. Write a discharge letter to the receiving facility nurse in charge.",
+    notes: "Mobilising with frame (partial weight-bearing). Wound clean, staples removed. Medications: metformin 500 mg BD, donepezil 10 mg ON, enoxaparin 40 mg SC OD (continue 4 more weeks), paracetamol 1 g QDS. Follow-up: orthopaedic OPD 6 weeks.",
+    model: `Orthopaedic Ward
+Maplewood General Hospital
+16 April 2026
+
+Nurse in Charge
+Sunfield Rehabilitation Centre
+34 Hillside Road
+
+Dear Colleague,
+
+Re: Edith Walsh, DOB: 12 September 1943 (age 82)
+NOK: Thomas Walsh (son), Tel: 07700 900234
+
+I am writing to provide a clinical handover summary for Mrs Walsh, who is being discharged to your facility today following orthopaedic surgery.
+
+Mrs Walsh was admitted on 8 April 2026 following a mechanical fall at home resulting in a right displaced neck-of-femur fracture. She underwent right hemiarthroplasty on 9 April 2026. The procedure was uneventful and she has made satisfactory postoperative progress.
+
+Her relevant past medical history includes type 2 diabetes mellitus (managed with metformin), mild Alzheimer's dementia (donepezil 10 mg nightly), and hypertension (treated with amlodipine). She lives alone in a ground-floor flat; her son, Thomas, is her main carer.
+
+Mrs Walsh is currently mobilising with a walking frame, partial weight-bearing on the right side. The wound is healing well; skin staples were removed on day seven with no signs of infection. She requires assistance with personal care and transfers.
+
+Her current medication regimen is as follows: metformin 500 mg twice daily (with food), donepezil 10 mg at night, amlodipine 5 mg once daily, enoxaparin 40 mg subcutaneously once daily (please continue for a further four weeks — until 14 May 2026), and paracetamol 1 g four times daily.
+
+Please be aware that Mrs Walsh occasionally experiences confusion, particularly in the evening (sundowning). A familiar routine and calm environment have been helpful.
+
+A follow-up appointment has been made at the orthopaedic outpatient clinic in six weeks. Please arrange community physiotherapy and occupational therapy input to support her rehabilitation and safe discharge home.
+
+Yours sincerely,
+
+Staff Nurse Sheila Ahmed
+Orthopaedic Ward, Bay C`
+  }
+];
+
+const checklistCriteria = [
+  { id: "c1", text: "Purpose is clearly stated in the opening sentence" },
+  { id: "c2", text: "Tone is professional and reader-focused (recipient's needs addressed)" },
+  { id: "c3", text: "Clinical information is accurate and relevant (no irrelevant details)" },
+  { id: "c4", text: "Correct OET letter format used (date, salutation, heading, closing)" },
+  { id: "c5", text: "Action requested is specific and clear" }
+];
+
+const speakingScenarios = [
+  {
+    title: "Consoling Parents of Premature Neonate",
+    badge: "badge-nicu", badgeText: "NICU",
+    patient: { name: "Mr & Mrs Morales", age: "Parents", setting: "NICU", issue: "Baby born at 26 weeks, on ventilator, parents distressed" },
+    task: "You are the primary nurse caring for Baby Morales in the NICU. The parents have just been told their baby has a Grade II intraventricular haemorrhage. They are visibly distressed and have many questions about what this means for their baby's future. Your task is to provide emotional support, explain the condition in accessible language, and clarify the immediate management plan.",
+    tips: ["Use plain language — avoid jargon when explaining IVH to non-medical parents", "Acknowledge emotions before giving information ('I can see this is very frightening…')", "Avoid making specific prognostic promises — use qualified language ('We hope… / It's difficult to know at this stage…')", "Demonstrate active listening — pause, nod, reflect back what parents say", "Examiners assess: relationship building, information gathering, information giving, and management"]
+  },
+  {
+    title: "Medication Refusal — Post-op Patient",
+    badge: "badge-emerg", badgeText: "Emergency",
+    patient: { name: "Mr James Obi", age: "58 years", setting: "Surgical Ward", issue: "Refusing prescribed anticoagulants post-hip replacement, worried about bleeding" },
+    task: "Mr Obi had a right total hip replacement 2 days ago. He is refusing his prescribed enoxaparin injection, saying he does not want to take 'blood thinners' as his brother died of a brain haemorrhage. Address his concerns, explain the risks of DVT/PE clearly, and negotiate a plan to ensure his safety.",
+    tips: ["Explore the patient's concern fully before explaining ('Tell me more about why you're worried…')", "Validate the emotional connection to his brother's death before correcting the misconception", "Explain DVT/PE risk in simple terms relevant to his situation", "Use a collaborative, not confrontational, approach to negotiation", "Examiners look for: empathy, patient-centred communication, clear safety information"]
+  },
+  {
+    title: "Discharge Teaching — Insulin-Dependent Neonate's Mother",
+    badge: "badge-paeds", badgeText: "Paediatrics",
+    patient: { name: "Ms Elena Voss", age: "Mother, 24 y/o", setting: "Paediatric Ward", issue: "Newly diagnosed T1DM in 4-year-old son, anxious mother being taught insulin injections before discharge" },
+    task: "You are discharging 4-year-old Leo Voss, newly diagnosed with Type 1 diabetes. His mother Elena is visibly anxious and says she is 'terrified of giving injections'. Teach her the key steps for administering insulin, address her fears, and ensure she knows when to seek urgent help.",
+    tips: ["Chunk information — do not overwhelm with everything at once", "Use teach-back method: 'Can you show me how you would do that?'", "Normalise her anxiety while reinforcing her ability ('Many parents feel this way at first…')", "Clear safety net: when to call for help (signs of hypoglycaemia, sick day rules)", "Demonstrate empathy and patience throughout — she is frightened"]
+  },
+  {
+    title: "Breaking Difficult News — Fetal Anomaly",
+    badge: "badge-obs", badgeText: "Obstetrics",
+    patient: { name: "Mrs Amara Diallo", age: "29 years, 20 weeks pregnant", setting: "Antenatal Clinic", issue: "Anomaly scan has detected a major cardiac defect; awaiting consultant; nurse to provide initial support" },
+    task: "Mrs Diallo has just been told by the sonographer that the 20-week anomaly scan has identified a possible major heart defect in her baby. The consultant obstetrician will review her shortly. Your role is to provide immediate emotional support, answer initial questions within your scope of practice, and ensure she is not left alone with incomplete information.",
+    tips: ["Do NOT attempt to explain the diagnosis in detail — this is outside nursing scope here", "Focus entirely on emotional support: 'I'm here with you. You don't have to be alone right now.'", "Avoid silence — but also avoid filling it with inappropriate reassurance ('I'm sure it'll be fine')", "Practical support: Is there someone she would like to call? Offer to stay with her.", "Examiners assess: management of distress, professional boundaries, empathy, safety"]
+  },
+  {
+    title: "Pain Management Negotiation — Chronic Pain Patient",
+    badge: "badge-emerg", badgeText: "Emergency",
+    patient: { name: "Ms Carla Mendes", age: "42 years", setting: "Emergency Department", issue: "Demanding IV morphine for back pain; previous opioid dependency documented; not on regular analgesia" },
+    task: "Ms Mendes presents requesting intravenous morphine for back pain (rated 9/10). Her notes show a documented history of opioid dependency in 2021, and she is not currently prescribed regular analgesia. Assess her pain, explain why IV morphine is not appropriate at this stage, and negotiate an alternative pain management plan.",
+    tips: ["Take her pain seriously — validate it before any discussion of medication choices", "Be honest but kind: explain your reasoning without being judgmental about her history", "Offer a clear alternative plan: paracetamol, NSAIDs, positioning, referral to pain team", "Do NOT use language that implies she is 'drug-seeking' — this is stigmatising", "Examiners look for: non-judgmental communication, pain assessment skills, negotiation, safety"]
+  },
+  {
+    title: "Resuscitation Discussion — DNAR Order",
+    badge: "badge-discharge", badgeText: "Discharge",
+    patient: { name: "Mr Harold Sutton", age: "76 years, advanced COPD + heart failure", setting: "Medical Ward", issue: "Patient requests to discuss DNAR; family are unaware; patient is lucid and competent" },
+    task: "Mr Sutton, who has advanced COPD and congestive heart failure, approaches you to ask about 'not being resuscitated' if something happens. He says he does not want his family told yet. He is lucid and has mental capacity. Explore his wishes sensitively, provide information about the DNAR process, and discuss next steps within the multidisciplinary team.",
+    tips: ["Confirm his capacity and autonomy first — this conversation belongs to him", "Use open questions: 'What's made you want to think about this now?'", "Explain honestly: the nurse's role is to document and communicate to the medical team — not unilaterally implement DNAR", "Explore his concerns about family — consider whether a family meeting could be supported", "Examiners assess: sensitive communication, end-of-life understanding, professional roles, honesty"]
+  }
+];
+
+const vocabData = {
+  "Neonatal ICU": [
+    { term: "Apnoea of prematurity", def: "Cessation of breathing for ≥20 seconds, or a shorter pause with bradycardia/desaturation, occurring in preterm neonates due to immature respiratory control.", ex: "Baby Lee was commenced on caffeine citrate to reduce episodes of apnoea of prematurity." },
+    { term: "Patent ductus arteriosus (PDA)", def: "Failure of the ductus arteriosus to close after birth, resulting in abnormal communication between the aorta and pulmonary artery.", ex: "An echocardiogram confirmed a haemodynamically significant PDA, and indomethacin treatment was initiated." },
+    { term: "Respiratory distress syndrome (RDS)", def: "A condition in premature neonates caused by surfactant deficiency, presenting with grunting, retractions, tachypnoea, and hypoxaemia.", ex: "The neonate developed RDS within two hours of birth and required intubation for surfactant administration." },
+    { term: "Hyperbilirubinaemia", def: "Elevated bilirubin in the blood; in neonates causes jaundice and, if untreated, risks kernicterus (bilirubin-induced brain injury).", ex: "Baby Torres was commenced on double phototherapy for hyperbilirubinaemia with a peak level of 310 μmol/L." },
+    { term: "Kangaroo care", def: "Skin-to-skin contact between a parent and neonate, held against the chest; promotes bonding, thermoregulation, and breastfeeding.", ex: "Kangaroo care was encouraged for at least two hours daily once Baby Singh was haemodynamically stable." },
+    { term: "Surfactant replacement therapy", def: "Administration of exogenous surfactant (endotracheal) to treat or prevent RDS in premature neonates.", ex: "She received two doses of surfactant replacement therapy in the first 12 hours of life." }
+  ],
+  "Emergency": [
+    { term: "Triage", def: "The systematic assessment and prioritisation of patients by urgency of clinical need upon arrival at an emergency department.", ex: "On triage, the patient was allocated a Category 2 (emergency) priority due to chest pain and diaphoresis." },
+    { term: "Sepsis", def: "A life-threatening organ dysfunction caused by a dysregulated host response to infection, requiring prompt identification and treatment.", ex: "The Sepsis 6 bundle was initiated within the first hour of recognising sepsis: blood cultures, IV antibiotics, and fluid resuscitation." },
+    { term: "Glasgow Coma Scale (GCS)", def: "A neurological scale (3–15) assessing eye opening, verbal response, and motor response to quantify level of consciousness.", ex: "On arrival his GCS was 10 (E2V3M5), indicating moderate impairment of consciousness." },
+    { term: "Haemodynamically unstable", def: "A clinical state in which the cardiovascular system is unable to maintain adequate perfusion to vital organs.", ex: "The patient was haemodynamically unstable on arrival, requiring immediate fluid resuscitation and vasopressor support." },
+    { term: "Anaphylaxis", def: "A severe, life-threatening systemic hypersensitivity reaction requiring immediate intramuscular adrenaline and supportive care.", ex: "Following penicillin administration, the patient developed anaphylaxis and was treated with IM adrenaline 0.5 mg." },
+    { term: "Tachypnoea", def: "Abnormally rapid breathing, typically defined as a respiratory rate above 20 breaths per minute in adults.", ex: "The patient presented with tachypnoea of 34 breaths per minute and decreased oxygen saturations." }
+  ],
+  "Obstetrics": [
+    { term: "Postpartum haemorrhage (PPH)", def: "Blood loss of ≥500 mL after vaginal delivery (or ≥1000 mL after caesarean), which may be primary (within 24h) or secondary.", ex: "Primary PPH was managed with IV oxytocin, bimanual uterine compression, and Bakri balloon insertion." },
+    { term: "Pre-eclampsia", def: "A pregnancy-specific disorder characterised by hypertension (≥140/90 mmHg) and proteinuria after 20 weeks gestation.", ex: "Mrs Kaur was commenced on labetalol and magnesium sulphate following a diagnosis of severe pre-eclampsia." },
+    { term: "Cardiotocography (CTG)", def: "Continuous electronic monitoring of fetal heart rate and uterine contractions, used to assess fetal wellbeing in labour.", ex: "The CTG showed late decelerations with a non-reassuring baseline, prompting urgent obstetric review." },
+    { term: "APGAR score", def: "A rapid assessment of neonatal wellbeing at 1 and 5 minutes of life, scoring appearance, pulse, grimace, activity, and respiration (0–10).", ex: "His APGAR scores were 5 at one minute and 8 at five minutes, indicating the need for initial resuscitation." },
+    { term: "Oxytocin augmentation", def: "Intravenous oxytocin infusion used to stimulate or strengthen uterine contractions during labour.", ex: "Oxytocin augmentation was commenced at 09:00 following inadequate progress in the active phase of labour." },
+    { term: "Chorioamnionitis", def: "Infection and inflammation of the fetal membranes (chorion and amnion), associated with preterm rupture of membranes and maternal fever.", ex: "Clinical chorioamnionitis was suspected given the maternal temperature of 38.4°C, fetal tachycardia, and offensive liquor." }
+  ],
+  "Medications": [
+    { term: "Enoxaparin", def: "A low molecular weight heparin used for prophylaxis and treatment of venous thromboembolism; administered subcutaneously.", ex: "Enoxaparin 40 mg subcutaneously once daily was prescribed for DVT prophylaxis throughout the hospital admission." },
+    { term: "Caffeine citrate", def: "A methylxanthine stimulant used in neonates to treat apnoea of prematurity by stimulating the central respiratory drive.", ex: "Caffeine citrate was commenced on day two of life for recurrent apnoeic episodes." },
+    { term: "Intravenous piperacillin-tazobactam", def: "A broad-spectrum beta-lactam/beta-lactamase inhibitor combination antibiotic used empirically in neutropenic sepsis and severe infections.", ex: "Piperacillin-tazobactam was initiated within one hour of the febrile neutropenia diagnosis per local protocol." },
+    { term: "Salbutamol (nebulised)", def: "A short-acting beta-2 agonist bronchodilator used to relieve acute bronchoconstriction in asthma and COPD exacerbations.", ex: "Back-to-back nebulised salbutamol was administered every 20 minutes during the first hour of the acute asthma exacerbation." },
+    { term: "Magnesium sulphate", def: "An anticonvulsant used in severe pre-eclampsia/eclampsia for seizure prevention; also used as a bronchodilator in acute severe asthma.", ex: "IV magnesium sulphate 2 g was administered over 20 minutes for treatment of severe acute asthma not responding to initial bronchodilator therapy." },
+    { term: "Metoclopramide", def: "A dopamine antagonist antiemetic and prokinetic agent used for nausea, vomiting, and gastroparesis.", ex: "Metoclopramide 10 mg IV was administered for persistent postoperative nausea following general anaesthesia." }
+  ],
+  "Procedures": [
+    { term: "Urinary catheterisation", def: "Insertion of a catheter into the bladder to drain urine; may be intermittent or indwelling (Foley catheter).", ex: "An indwelling urinary catheter was inserted to facilitate accurate fluid balance monitoring in the critically unwell patient." },
+    { term: "Nasogastric (NG) tube insertion", def: "Placement of a tube via the nose into the stomach for enteral feeding, medication administration, or decompression.", ex: "An NG tube was inserted and position confirmed by pH testing (pH 3) before commencing enteral feeds." },
+    { term: "Blood cultures", def: "Microbiological samples taken from peripheral veins (typically ×2 sets) to identify bacteraemia or septicaemia before antibiotic initiation.", ex: "Two sets of peripheral blood cultures were collected prior to commencing empirical antibiotic therapy." },
+    { term: "Wound assessment (TIME framework)", def: "Structured wound evaluation using Tissue, Infection/Inflammation, Moisture balance, and Edge of wound to guide management.", ex: "Using the TIME framework, the wound was assessed as having sloughy tissue, signs of local infection, and macerated wound edges." },
+    { term: "Cardiopulmonary resuscitation (CPR)", def: "Emergency procedure of chest compressions and rescue breaths (30:2) used in cardiac or respiratory arrest to maintain circulation.", ex: "On the ward round, the team reviewed Mr Sutton's DNAR order and documented that CPR would not be clinically appropriate." },
+    { term: "Lumbar puncture (LP)", def: "Invasive procedure involving insertion of a needle into the subarachnoid space (L3–L4) to obtain CSF for diagnostic analysis.", ex: "A lumbar puncture was performed to obtain CSF for analysis, confirming bacterial meningitis." }
+  ],
+  "Pain & Discomfort": [
+    { term: "Acute onset pain", def: "Pain that begins suddenly and is usually severe; must be distinguished from chronic pain in clinical documentation.", ex: "The patient reported acute onset chest pain radiating to the left arm, commencing approximately two hours prior to arrival." },
+    { term: "Radiating pain", def: "Pain that spreads from its point of origin to other areas of the body along nerve pathways.", ex: "She described radiating pain from the lower back down the left leg, consistent with lumbar nerve root compression." },
+    { term: "Colicky pain", def: "Intermittent, cramping pain caused by muscular spasm in a hollow organ such as the bowel, ureter, or bile duct.", ex: "He complained of severe colicky abdominal pain in the right iliac fossa, associated with nausea and vomiting." },
+    { term: "Pleuritic chest pain", def: "Sharp, localised chest pain that worsens on inspiration or coughing, typically indicating pleural irritation.", ex: "The patient described pleuritic chest pain on the right side, which increased markedly on deep inspiration." },
+    { term: "Referred pain", def: "Pain perceived at a site distant from its actual origin, due to shared nerve pathways; e.g. right shoulder tip pain in liver/diaphragm pathology.", ex: "Right shoulder tip pain was noted, suggesting referred pain from diaphragmatic irritation secondary to hepatic pathology." },
+    { term: "Burning pain / dysuria", def: "A sensation of burning or stinging on urination, strongly associated with urinary tract infection or urethral inflammation.", ex: "The patient complained of dysuria and urinary frequency over three days, with a burning sensation throughout micturition." },
+    { term: "Pain on palpation / tenderness", def: "Discomfort or pain elicited when a body area is pressed during physical examination.", ex: "Marked tenderness on palpation was noted in the right iliac fossa, with guarding and rebound tenderness present." },
+    { term: "Rebound tenderness", def: "Pain that is worse when pressure is suddenly released rather than applied; a sign of peritoneal irritation.", ex: "Rebound tenderness was elicited in the right lower quadrant, raising clinical suspicion for appendicitis." },
+    { term: "Visual analogue scale (VAS) / NRS", def: "Standardised tool for quantifying self-reported pain intensity, typically on a 0–10 numerical rating scale.", ex: "On the numerical rating scale, the patient rated her pain at 8/10 at rest, increasing to 10/10 on movement." },
+    { term: "Exacerbating and relieving factors", def: "Conditions or actions that make pain worse or better, used in systematic pain assessment (SOCRATES).", ex: "The pain was exacerbated by movement and partially relieved by lying still; no analgesics had been taken prior to arrival." }
+  ],
+  "Respiratory Symptoms": [
+    { term: "Dyspnoea (shortness of breath / SOB)", def: "Subjective sensation of difficulty or discomfort in breathing; may be at rest or on exertion.", ex: "The patient presented with progressive dyspnoea on exertion over two weeks, now occurring at rest." },
+    { term: "Orthopnoea", def: "Breathlessness that worsens when lying flat and is relieved by sitting or standing upright; associated with heart failure.", ex: "She reported orthopnoea, requiring three pillows to sleep, suggestive of decompensated left ventricular failure." },
+    { term: "Paroxysmal nocturnal dyspnoea (PND)", def: "Sudden episodes of severe breathlessness that wake the patient from sleep; a hallmark of left heart failure.", ex: "He described waking breathless and gasping at approximately 2 am — paroxysmal nocturnal dyspnoea was documented." },
+    { term: "Productive cough", def: "A cough that generates sputum; the colour, consistency, and quantity of sputum must be described.", ex: "The patient reported a productive cough with green purulent sputum for five days, associated with fever and malaise." },
+    { term: "Haemoptysis", def: "Coughing up blood or blood-stained sputum; may indicate pulmonary embolism, TB, malignancy, or severe pneumonia.", ex: "He reported haemoptysis — approximately one tablespoon of bright red blood — on two occasions that morning." },
+    { term: "Wheeze", def: "A high-pitched whistling sound during breathing caused by airway narrowing; heard in asthma and COPD.", ex: "An expiratory wheeze was audible without a stethoscope, and the patient was commenced on back-to-back nebulisers." },
+    { term: "Stridor", def: "A harsh, high-pitched inspiratory sound indicating upper airway obstruction; a medical emergency.", ex: "The child presented with stridor and drooling, raising immediate concern for epiglottitis; senior review was called." },
+    { term: "Use of accessory muscles", def: "Engagement of neck, shoulder, and intercostal muscles to assist breathing; indicates significant respiratory distress.", ex: "The patient was in visible distress with use of accessory muscles, a respiratory rate of 36, and SpO₂ of 88%." },
+    { term: "Subcostal / intercostal recession", def: "Inward drawing of soft tissue below or between the ribs during inspiration, indicating increased work of breathing; common in children.", ex: "Subcostal and intercostal recession were noted in the neonate, alongside expiratory grunting and nasal flaring." },
+    { term: "Oxygen saturation (SpO₂)", def: "Peripheral oxygen saturation measured by pulse oximetry; normal ≥95% in adults (target may differ in COPD or neonates).", ex: "On arrival, SpO₂ was 88% on room air, improving to 96% following application of 6 L/min oxygen via face mask." }
+  ],
+  "Neurological & General Symptoms": [
+    { term: "Altered level of consciousness (ALOC)", def: "Any deviation from normal alertness, from mild confusion to deep unresponsiveness; assessed with GCS or AVPU.", ex: "On arrival, the patient had an altered level of consciousness with a GCS of 9, prompting urgent CT head." },
+    { term: "Confusion / disorientation", def: "Impaired clarity of thought, awareness of time, place or person; may be acute (delirium) or chronic (dementia).", ex: "The patient was confused and disoriented to time and place, scoring 4/10 on the Abbreviated Mental Test Score." },
+    { term: "Syncope / pre-syncope", def: "Syncope: transient loss of consciousness due to reduced cerebral perfusion. Pre-syncope: near-fainting with light-headedness and visual disturbance.", ex: "He reported a syncopal episode lasting approximately 30 seconds, preceded by light-headedness and diaphoresis." },
+    { term: "Seizure", def: "A transient episode of abnormal, excessive, or synchronous neuronal activity in the brain, presenting with motor, sensory, or autonomic features.", ex: "The patient experienced a tonic-clonic seizure lasting 90 seconds; post-ictal drowsiness was noted for 20 minutes." },
+    { term: "Headache — sudden onset / thunderclap", def: "A headache reaching maximal intensity within seconds to minutes ('worst headache of my life'); requires urgent exclusion of subarachnoid haemorrhage.", ex: "She described a sudden-onset thunderclap headache while at rest — an emergency CT head was arranged immediately." },
+    { term: "Diaphoresis (profuse sweating)", def: "Excessive, abnormal sweating; associated with sepsis, myocardial infarction, hypoglycaemia, and severe pain.", ex: "On assessment, the patient was pale, cold, and diaphoretic, with a heart rate of 122 — sepsis was suspected." },
+    { term: "Nausea and vomiting", def: "Common symptoms with many causes; document onset, frequency, content (including haematemesis), and associated triggers.", ex: "She reported nausea and two episodes of vomiting since this morning, with no haematemesis or bile." },
+    { term: "Pyrexia / fever", def: "Body temperature above 38.0°C; document peak temperature, pattern, and associated rigors or sweating.", ex: "The patient was pyrexial at 38.9°C with rigors on admission, and blood cultures were taken prior to commencing antibiotics." },
+    { term: "Generalised malaise / fatigue", def: "Non-specific feeling of weakness, tiredness, or unwellness; often accompanies systemic illness and infection.", ex: "The patient reported a five-day history of generalised malaise and progressive fatigue, unable to carry out activities of daily living." },
+    { term: "Pallor / cyanosis / jaundice", def: "Pallor: abnormal paleness (anaemia, shock). Cyanosis: blue discolouration of skin/lips (hypoxia). Jaundice: yellow discolouration (raised bilirubin).", ex: "On examination, the patient was pale and peripherally cyanosed, with central cyanosis confirmed on lip and tongue assessment." },
+    { term: "Oedema (peripheral / pitting)", def: "Accumulation of excess fluid in tissues; pitting oedema leaves an indent when pressed; common in heart failure, renal disease, venous insufficiency.", ex: "Bilateral pitting oedema was noted to the mid-calf, consistent with decompensated congestive cardiac failure." },
+    { term: "Rigors", def: "Severe, uncontrollable episodes of shivering with rapid temperature rise; strongly associated with bacteraemia and systemic infection.", ex: "The patient reported rigors for the past four hours alongside a temperature of 39.4°C, prompting a sepsis screen." }
+  ]
+};
+
+// ══════════════════════════════════════
+// STATE
+// ══════════════════════════════════════
+let wIdx = 0;
+let sIdx = 0;
+let modelVisible = false;
+let timerInterval = null;
+let timerPhase = 'prep';
+let timerSeconds = 180;
+let timerRunning = false;
+let vocabCat = Object.keys(vocabData)[0];
+let testPool = [];
+let testIdx = 0;
+let testScore = { right: 0, total: 0 };
+
+// ══════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════
+function showSection(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ══════════════════════════════════════
+// WRITING
+// ══════════════════════════════════════
+function renderWriting() {
+  const sc = writingScenarios[wIdx];
+  document.getElementById('wScenarioLabel').textContent = `Scenario ${wIdx+1} / ${writingScenarios.length}`;
+  document.getElementById('wScenarioTitle').textContent = sc.title;
+  document.getElementById('wBadge').className = `badge ${sc.badge}`;
+  document.getElementById('wBadge').textContent = sc.badgeText;
+  document.getElementById('wScenarioText').textContent = sc.text;
+  document.getElementById('wScenarioNotes').textContent = sc.notes;
+  document.getElementById('modelAnswer').style.display = 'none';
+  document.getElementById('modelText').textContent = sc.model;
+  modelVisible = false;
+  document.querySelector('[onclick="toggleModel()"]').textContent = '👁 Show model answer';
+  renderChecklist();
+}
+
+function prevScenario() { wIdx = (wIdx - 1 + writingScenarios.length) % writingScenarios.length; renderWriting(); }
+function nextScenario() { wIdx = (wIdx + 1) % writingScenarios.length; renderWriting(); }
+
+function toggleModel() {
+  modelVisible = !modelVisible;
+  document.getElementById('modelAnswer').style.display = modelVisible ? 'block' : 'none';
+  document.querySelector('[onclick="toggleModel()"]').textContent = modelVisible ? '🙈 Hide model answer' : '👁 Show model answer';
+}
+
+function clearLetter() {
+  if (confirm('Clear your letter? This cannot be undone.')) {
+    document.getElementById('letterArea').value = '';
+    document.querySelectorAll('.check-item input').forEach(cb => { cb.checked = false; cb.closest('.check-item').classList.remove('checked'); });
+    updateCheckProgress();
+  }
+}
+
+function copyLetter() {
+  const text = document.getElementById('letterArea').value;
+  if (!text.trim()) { alert('Nothing to copy yet!'); return; }
+  navigator.clipboard.writeText(text).then(() => alert('Letter copied to clipboard ✓'));
+}
+
+function renderChecklist() {
+  const container = document.getElementById('checklistItems');
+  container.innerHTML = '';
+  checklistCriteria.forEach((c, i) => {
+    const div = document.createElement('div');
+    div.className = 'check-item';
+    div.id = `ci-${i}`;
+    div.innerHTML = `<input type="checkbox" id="${c.id}" onchange="updateCheckProgress()"><label for="${c.id}">${c.text}</label>`;
+    div.onclick = function(e) { if (e.target.tagName !== 'INPUT') { const cb = this.querySelector('input'); cb.checked = !cb.checked; updateCheckProgress(); } };
+    container.appendChild(div);
+  });
+  updateCheckProgress();
+}
+
+function updateCheckProgress() {
+  let count = 0;
+  document.querySelectorAll('.check-item input').forEach((cb, i) => {
+    const item = document.getElementById(`ci-${i}`);
+    if (cb.checked) { count++; item.classList.add('checked'); } else { item.classList.remove('checked'); }
+  });
+  document.getElementById('checkProgress').textContent = `${count} / ${checklistCriteria.length} criteria ticked`;
+}
+
+// ══════════════════════════════════════
+// SPEAKING
+// ══════════════════════════════════════
+function renderSpeaking() {
+  const sc = speakingScenarios[sIdx];
+  document.getElementById('sScenarioLabel').textContent = `Scenario ${sIdx+1} / ${speakingScenarios.length}`;
+  document.getElementById('sTitle').textContent = sc.title;
+  document.getElementById('sBadge').className = `badge ${sc.badge}`;
+  document.getElementById('sBadge').textContent = sc.badgeText;
+  const pi = document.getElementById('patientInfo');
+  pi.innerHTML = `
+    <div class="info-pill"><strong>Patient / Person</strong>${sc.patient.name}</div>
+    <div class="info-pill"><strong>Age / Status</strong>${sc.patient.age}</div>
+    <div class="info-pill"><strong>Setting</strong>${sc.patient.setting}</div>
+    <div class="info-pill"><strong>Presenting Issue</strong>${sc.patient.issue}</div>
+  `;
+  document.getElementById('sTask').textContent = sc.task;
+  const tipsList = document.getElementById('sTipsList');
+  tipsList.innerHTML = sc.tips.map(t => `<li>${t}</li>`).join('');
+  resetTimer();
+}
+
+function prevSpeaking() { sIdx = (sIdx - 1 + speakingScenarios.length) % speakingScenarios.length; renderSpeaking(); }
+function nextSpeaking() { sIdx = (sIdx + 1) % speakingScenarios.length; renderSpeaking(); }
+
+// Timer
+function setPhase(phase) {
+  timerPhase = phase;
+  timerRunning = false;
+  clearInterval(timerInterval);
+  if (phase === 'prep') { timerSeconds = 180; document.getElementById('timerLabel').textContent = 'Preparation time — read and plan your response'; }
+  else { timerSeconds = 300; document.getElementById('timerLabel').textContent = 'Role play time — speak with your practice partner'; }
+  document.getElementById('prepBtn').classList.toggle('active', phase === 'prep');
+  document.getElementById('roleBtn').classList.toggle('active', phase === 'role');
+  updateTimerDisplay();
+}
+
+function startTimer() {
+  if (timerRunning) return;
+  timerRunning = true;
+  timerInterval = setInterval(() => {
+    timerSeconds--;
+    updateTimerDisplay();
+    if (timerSeconds <= 0) { clearInterval(timerInterval); timerRunning = false; playBeep(); }
+  }, 1000);
+}
+
+function pauseTimer() {
+  timerRunning = false;
+  clearInterval(timerInterval);
+}
+
+function resetTimer() {
+  pauseTimer();
+  setPhase(timerPhase);
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(timerSeconds / 60);
+  const s = timerSeconds % 60;
+  const el = document.getElementById('timerDisplay');
+  el.textContent = `${m}:${s.toString().padStart(2,'0')}`;
+  el.className = 'timer-display' + (timerSeconds <= 30 ? ' warn' : '');
+}
+
+function playBeep() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.frequency.value = 880;
+    gain.gain.setValueAtTime(0.3, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.8);
+    osc.start(); osc.stop(ctx.currentTime + 0.8);
+  } catch(e) {}
+}
+
+// ══════════════════════════════════════
+// VOCABULARY
+// ══════════════════════════════════════
+function renderVocabCats() {
+  const cats = document.getElementById('vocabCats');
+  cats.innerHTML = Object.keys(vocabData).map(cat =>
+    `<button class="vcat-btn${cat === vocabCat ? ' active' : ''}" data-cat="${cat.replace(/"/g,'&quot;')}">${cat}</button>`
+  ).join('');
+  cats.querySelectorAll('.vcat-btn').forEach(btn =>
+    btn.addEventListener('click', () => selectVocabCat(btn.dataset.cat))
+  );
+}
+
+function selectVocabCat(cat) {
+  vocabCat = cat;
+  renderVocabCats();
+  renderVocabList();
+  initTestPool();
+}
+
+function renderVocabList() {
+  const list = document.getElementById('vocabList');
+  const items = vocabData[vocabCat];
+  list.innerHTML = items.map((v, i) => `
+    <div class="vocab-item" onclick="toggleVocab(${i})" id="vi-${i}">
+      <div class="vocab-term">📌 ${v.term}</div>
+      <div class="vocab-def">${v.def}</div>
+      <div class="vocab-example">"${v.ex}"</div>
+    </div>
+  `).join('');
+}
+
+function toggleVocab(i) {
+  document.getElementById(`vi-${i}`).classList.toggle('open');
+}
+
+function initTestPool() {
+  testPool = [...vocabData[vocabCat]];
+  testPool.sort(() => Math.random() - 0.5);
+  testIdx = 0;
+  testScore = { right: 0, total: 0 };
+  renderTestItem();
+}
+
+function renderTestItem() {
+  if (!testPool.length) return;
+  const item = testPool[testIdx % testPool.length];
+  document.getElementById('testTerm').textContent = item.term;
+  document.getElementById('testInput').value = '';
+  document.getElementById('testReveal').style.display = 'none';
+  document.getElementById('testReveal').textContent = '';
+  document.getElementById('testScore').textContent = testScore.total > 0 ? `${testScore.right} / ${testScore.total} revealed` : '';
+}
+
+function revealTest() {
+  const item = testPool[testIdx % testPool.length];
+  const reveal = document.getElementById('testReveal');
+  reveal.textContent = item.def + ' — e.g.: "' + item.ex + '"';
+  reveal.style.display = 'block';
+  testScore.total++;
+  document.getElementById('testScore').textContent = `${testScore.total} cards revealed`;
+}
+
+function nextTest() {
+  testIdx++;
+  if (testIdx >= testPool.length) { testPool.sort(() => Math.random() - 0.5); testIdx = 0; }
+  renderTestItem();
+}
+
+// ══════════════════════════════════════
+// LOG
+// ══════════════════════════════════════
+function saveLog() {
+  const date = document.getElementById('logDate').value;
+  const resource = document.getElementById('logResource').value;
+  const score = document.getElementById('logScore').value.trim();
+  const notes = document.getElementById('logNotes').value.trim();
+  if (!date || !resource) { alert('Please fill in date and resource.'); return; }
+  const entries = getLogEntries();
+  entries.unshift({ id: Date.now(), date, resource, score, notes });
+  localStorage.setItem('oet_log', JSON.stringify(entries));
+  document.getElementById('logDate').value = new Date().toISOString().split('T')[0];
+  document.getElementById('logResource').value = '';
+  document.getElementById('logScore').value = '';
+  document.getElementById('logNotes').value = '';
+  renderLog();
+}
+
+function getLogEntries() {
+  try { return JSON.parse(localStorage.getItem('oet_log') || '[]'); } catch(e) { return []; }
+}
+
+function deleteLog(id) {
+  if (!confirm('Delete this entry?')) return;
+  const entries = getLogEntries().filter(e => e.id !== id);
+  localStorage.setItem('oet_log', JSON.stringify(entries));
+  renderLog();
+}
+
+function renderLog() {
+  const entries = getLogEntries();
+  const container = document.getElementById('logEntries');
+  if (!entries.length) {
+    container.innerHTML = `<div class="empty-state"><div class="empty-icon">🎧</div>No sessions logged yet.<br>Add your first practice session above!</div>`;
+  } else {
+    container.innerHTML = `<div class="log-entries">${entries.map(e => `
+      <div class="log-entry">
+        <div class="log-date">${e.date ? e.date.split('-').reverse().join('/') : '—'}</div>
+        <div class="log-body">
+          <div class="log-resource">${e.resource}</div>
+          ${e.score ? `<div class="log-score">Score / Band: ${e.score}</div>` : ''}
+          ${e.notes ? `<div class="log-notes">${e.notes}</div>` : ''}
+        </div>
+        <button class="log-delete" onclick="deleteLog(${e.id})" title="Delete">✕</button>
+      </div>
+    `).join('')}</div>`;
+  }
+  updateStats(entries);
+}
+
+function updateStats(entries) {
+  document.getElementById('statTotal').textContent = entries.length;
+  const scores = entries.map(e => parseFloat(e.score)).filter(n => !isNaN(n));
+  document.getElementById('statAvg').textContent = scores.length ? (scores.reduce((a,b)=>a+b,0)/scores.length).toFixed(1) : '—';
+  // Streak: count consecutive days from today
+  const today = new Date().toISOString().split('T')[0];
+  const dates = [...new Set(entries.map(e => e.date))].sort().reverse();
+  let streak = 0;
+  let check = new Date(today);
+  for (let i = 0; i < 30; i++) {
+    const d = check.toISOString().split('T')[0];
+    if (dates.includes(d)) { streak++; check.setDate(check.getDate() - 1); } else break;
+  }
+  document.getElementById('statStreak').textContent = streak;
+}
+
+// ══════════════════════════════════════
+// INIT
+// ══════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  renderWriting();
+  renderSpeaking();
+  renderVocabCats();
+  renderVocabList();
+  initTestPool();
+  document.getElementById('logDate').value = new Date().toISOString().split('T')[0];
+  renderLog();
+});
+
+// ══════════════════════════════════════
+// PWA INSTALL
+// ══════════════════════════════════════
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  document.getElementById('installBanner').style.display = 'block';
+});
+function installApp() {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(() => {
+    deferredPrompt = null;
+    document.getElementById('installBanner').style.display = 'none';
+  });
+}
+window.addEventListener('appinstalled', () => {
+  document.getElementById('installBanner').style.display = 'none';
+});
+</script>
+</body>
+</html>
